@@ -65,7 +65,7 @@ int main() {
                                  CU_TEST_INFO_NULL};
 
   CU_SuiteInfo suites[] = {{"is_digit testing", init_suite1, clean_suite1,
-                           isdigit_tests},
+                           .pTests=isdigit_tests},
                            CU_SUITE_INFO_NULL};
 
   /* initialize the CUnit test registry */

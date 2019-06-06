@@ -1,4 +1,4 @@
-CUNIT = -L/home/ff/cs61c/cunit/install/lib -I/home/ff/cs61c/cunit/install/include -lcunit
+CUNIT = -L/usr/local/lib -I/usr/local/include -lcunit
 
 
 build: test.h test.c ../../utils.c ../../utils.h ../../string-helpers.h ../../string-helpers.c
