@@ -1,3 +1,5 @@
 *.zip
 *.pdf
 *.o
+*.out
+*.jar

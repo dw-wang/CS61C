@@ -54,6 +54,76 @@ void testISDIGIT_EscChars(void) {
   CU_ASSERT_FALSE(is_digit('\n'));
 }
 
+void testISSPACE_True(void) {
+  CU_ASSERT_TRUE(is_space(' '));
+  CU_ASSERT_TRUE(is_space('\n'));
+  CU_ASSERT_TRUE(is_space('\t'));
+}
+
+void testISSPACE_False(void) {
+  CU_ASSERT_FALSE(is_space('1'));
+  CU_ASSERT_FALSE(is_space('c'));
+  CU_ASSERT_FALSE(is_space('\\'));
+}
+
+void testISIDENTIFIERCOMP_Letters(void) {
+  CU_ASSERT_TRUE(is_identifier_component('a'));
+  CU_ASSERT_TRUE(is_identifier_component('A'));
+  CU_ASSERT_TRUE(is_identifier_component('z'));
+  CU_ASSERT_TRUE(is_identifier_component('Z'));
+}
+
+void testISIDENTIFIERCOMP_Digits(void) {
+  CU_ASSERT_TRUE(is_identifier_component('1'));
+  CU_ASSERT_TRUE(is_identifier_component('0'));
+  CU_ASSERT_TRUE(is_identifier_component('9'));
+}
+
+void testISIDENTIFIERCOMP_Symbols(void) {
+  CU_ASSERT_FALSE(is_identifier_component('!'));
+  CU_ASSERT_FALSE(is_identifier_component('~'));
+  CU_ASSERT_FALSE(is_identifier_component('@'));
+  CU_ASSERT_FALSE(is_identifier_component('$'));
+  CU_ASSERT_FALSE(is_identifier_component('%'));
+  CU_ASSERT_FALSE(is_identifier_component('^'));
+  CU_ASSERT_FALSE(is_identifier_component('&'));
+  CU_ASSERT_FALSE(is_identifier_component('*'));
+  CU_ASSERT_FALSE(is_identifier_component('-'));
+  CU_ASSERT_TRUE(is_identifier_component('_'));
+}
+
+void testISVALIDIDENTIFIER_Valid(void) {
+  CU_ASSERT_TRUE(is_valid_identifier("hello"));
+  CU_ASSERT_TRUE(is_valid_identifier("hello_world"));
+  CU_ASSERT_TRUE(is_valid_identifier("hi_world123"));
+  CU_ASSERT_TRUE(is_valid_identifier("Hi123_"));
+  CU_ASSERT_TRUE(is_valid_identifier("Hi123_world_"));
+}
+
+void testISVALIDIDENTIFIER_Invalid(void) {
+  CU_ASSERT_FALSE(is_valid_identifier("_hello"));
+  CU_ASSERT_FALSE(is_valid_identifier("123hello"));
+  CU_ASSERT_FALSE(is_valid_identifier("hello-worlf"));
+  CU_ASSERT_FALSE(is_valid_identifier("hello%world"));
+  CU_ASSERT_FALSE(is_valid_identifier("hello world"));
+  CU_ASSERT_FALSE(is_valid_identifier("#hello"));
+}
+
+void testSTRCONCAT(void) {
+  char* s1[] = {"hello"};
+  char* s2[] = {"hello", "world"};
+  char* s3[] = {"hello-", "world"};
+  char* s4[] = {"hello", " world"};
+  char* s5[] = {"string", " concat", " test"};
+
+  CU_ASSERT_EQUAL(0, strcmp("hello", str_concat(s1, 1)));
+  CU_ASSERT_EQUAL(0, strcmp("helloworld", str_concat(s2, 2)));
+  CU_ASSERT_EQUAL(0, strcmp("hello-world", str_concat(s3, 2)));
+  CU_ASSERT_EQUAL(0, strcmp("hello world", str_concat(s4, 2)));
+  CU_ASSERT_EQUAL(0, strcmp("string concat test", str_concat(s5, 3)));
+}
+
+
 /* The main() function for setting up and running the tests.
  * Returns a CUE_SUCCESS on successful running, another
  * CUnit error code on failure.
@@ -64,8 +134,32 @@ int main() {
                                  {"Test numbers", testISDIGIT_Integers},
                                  CU_TEST_INFO_NULL};
 
+  CU_TestInfo isspace_tests[] = {{"Test true space", testISSPACE_True},
+                                 {"Test false space", testISSPACE_False},
+				 CU_TEST_INFO_NULL};
+
+  CU_TestInfo isidentifiercomp_tests[] = {{"Test letters", testISIDENTIFIERCOMP_Letters},
+                                        {"Test digits", testISIDENTIFIERCOMP_Digits},
+                                        {"Test symbols", testISIDENTIFIERCOMP_Symbols},
+                                        CU_TEST_INFO_NULL};
+
+  CU_TestInfo isvalididentifier_tests[] = {{"Test valid id", testISVALIDIDENTIFIER_Valid},
+                                           {"Test invalid id", testISVALIDIDENTIFIER_Invalid},
+                                           CU_TEST_INFO_NULL};
+
+  CU_TestInfo strconcat_tests[] = {{"Test str_concat", testSTRCONCAT},
+                                   CU_TEST_INFO_NULL};
+
   CU_SuiteInfo suites[] = {{"is_digit testing", init_suite1, clean_suite1,
                            .pTests=isdigit_tests},
+	                   {"is_space testing", init_suite1, clean_suite1,
+			   .pTests=isspace_tests},
+			   {"is_identifier_comp testing", init_suite1, clean_suite1,
+			   .pTests=isidentifiercomp_tests},
+			   {"is_valid_identifier testing", init_suite1, clean_suite1,
+			   .pTests=isvalididentifier_tests},
+			   {"str_concat testing", init_suite1, clean_suite1,
+			   .pTests=strconcat_tests},
                            CU_SUITE_INFO_NULL};
 
   /* initialize the CUnit test registry */

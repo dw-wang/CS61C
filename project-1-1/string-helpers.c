@@ -76,6 +76,9 @@ int replace_escape_in_string(char* str) {
 */
 int is_alpha(char c) {
   /* YOUR CODE HERE */
+  if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
+    return 1;
+  }
   return 0;
 }
 
@@ -86,6 +89,8 @@ int is_alpha(char c) {
 */
 int is_space(char c) {
   /* YOUR CODE HERE */
+  if (c == ' ' || c == '\n' || c == '\t') 
+      return 1;
   return 0;
 }
 
@@ -95,6 +100,7 @@ int is_space(char c) {
 */
 int is_digit(char c) {
   /* YOUR CODE HERE */
+  if (c >= '0' && c <= '9') return 1;
   return 0;
 }
 
@@ -105,6 +111,8 @@ int is_digit(char c) {
 */
 int is_identifier_component(char c) {
   /* YOUR CODE HERE */
+  if (is_alpha(c) || is_digit(c) || c == '_') 
+      return 1;
   return 0;
 }
 
@@ -115,7 +123,15 @@ int is_identifier_component(char c) {
 */
 int is_valid_identifier(char* str) {
   /* YOUR CODE HERE */
-  return 0;
+  if (!is_alpha(str[0])) {
+    return 0;
+  } else {
+    for (size_t i = 1; i < strlen(str); i++) {
+      if (!is_identifier_component(str[i])) 
+	return 0;
+    }
+  }
+  return 1;
 }
 
 /*
@@ -126,5 +142,19 @@ int is_valid_identifier(char* str) {
 */
 char* str_concat(char** strings, size_t count) {
   /* YOUR CODE HERE */
-  return NULL;
+  size_t l = 0;
+  for (size_t i = 0; i < count; i++) {
+    l += strlen(strings[i]);
+  }
+  char* result = (char*) malloc(l+1);
+  char* pos = result;
+  for (size_t i = 0; i < count; i++) {
+    char* it = strings[i];
+    size_t il = strlen(strings[i]);
+    for (size_t i = 0; i < il; i++) {
+      *pos++ = *it++;
+    }
+  }
+  *pos = 0;
+  return result;
 }
