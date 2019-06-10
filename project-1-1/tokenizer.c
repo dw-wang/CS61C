@@ -1,4 +1,4 @@
-#include "tokenizer.h"
+include "tokenizer.h"
 #include <ctype.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -147,8 +147,20 @@ size_t SelectToken(char* buffer,
     if (size_read + 1 == size) {
       return size_read;
     }
-    if (0) {
+    if (buffer[size_read+1] == '/') {
       /* YOUR CODE HERE*/
+      IS_COMMENT = 1;
+      while (size_read < size && buffer[size] != '\n') {
+        size_read++;
+      }
+      if (buffer[size_read] == '\n') {
+        size_read++;
+        (*linenum)++;
+      }
+      // Everything in the buffer is just comment
+      if (size_read == size) {
+        return size;
+      }
     } else {
       size_read++;
       t = create_token(filename);
@@ -349,15 +361,32 @@ size_t SelectToken(char* buffer,
     /* YOUR CODE HERE */
 
     /* FIXME IM NOT CORRECT. */
-
-    int total =
+    size_read++;
+    if (buffer[size_read] == '\\') {
+      if (size_read + 2 < size && buffer[size_read+2] == '\'') {
+	char rep_esc = replace_escape_in_character(buffer+size_read);
+        size_read += 2;
+	if (rep_esc != -1) {
+	  size_read++;
+	  /* Create a character token */
+	  t = create_token(filename);
+          t->linenum = *linenum;
+	  t->data.character = rep_esc;
+	} else {
+	  
+	}
+      }
+    } else if (!is_print(buffer[size_read])) {
+      int total =
         generate_string_error(&t, buffer, size_read, size, *linenum, filename);
-    if (total == 0) {
-      return size_read;
+      if (total == 0) {
+        return size_read;
+      } else {
+        size_read += total;
+      }
     } else {
-      size_read += total;
+      
     }
-
   } else if (buffer[size_read] == '"') {  // strings and some errors
     size_t str_len = 1;
     int search = 1;
